@@ -1,4 +1,4 @@
-module github.com/kivra/krakend-sizelimit
+module github.com/Noah-Labs-Development/krakend-sizelimit
 
 go 1.17
 
