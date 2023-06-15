@@ -2,21 +2,15 @@ package sizelimit
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	apierrors "github.com/kivra/kivra-api-errors"
 	"github.com/luraproject/lura/v2/config"
 	"github.com/luraproject/lura/v2/proxy"
 	krakendgin "github.com/luraproject/lura/v2/router/gin"
 )
-
-var AbortHandlerFunc = func(apiError *apierrors.ApiError, logMessage string, c *gin.Context) {
-	c.AbortWithStatusJSON(apiError.StatusCode, apiError.Payload)
-}
 
 func ExceedsSizeLimit(c *gin.Context, limit int64) bool {
 	contentLength := c.Request.Header.Get("Content-Length")
@@ -32,13 +26,10 @@ func ExceedsSizeLimit(c *gin.Context, limit int64) bool {
 }
 
 func LimiterFactory(limit int64, handlerFunc gin.HandlerFunc) gin.HandlerFunc {
-	apierrors.Load()
-	apiError := apierrors.FromStatusOrFallback(http.StatusRequestEntityTooLarge)
-	apiError.Payload.LongMessage = fmt.Sprintf("Content length should not exceed %d B", limit)
 
 	return func(c *gin.Context) {
 		if ExceedsSizeLimit(c, limit) {
-			AbortHandlerFunc(&apiError, apiError.Payload.LongMessage, c)
+			c.AbortWithStatus(413)
 			return
 		}
 		handlerFunc(c)

@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.7.7
-	github.com/kivra/kivra-api-errors v1.0.3-0.20220923122912-450be7804924
 	github.com/luraproject/lura/v2 v2.0.5
 )
 
